@@ -20,7 +20,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Run Lint Script for Bazel/Pyupgrade/Black/Clang
         run: |
           set -x -e
@@ -32,7 +32,7 @@ jobs:
     name: Lint for Docs
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Run Lint Script for Docs
         run: |
           set -x -e
@@ -52,15 +52,15 @@ jobs:
 
   macos:
     name: macOS
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: GCP
         run: |
           cat > service_account_creds.json << EOF
           ${{ secrets.GCP_CREDS }}
           EOF
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: "3.9"
       - name: macOS
@@ -87,7 +87,7 @@ jobs:
         REPO_NAME: ${{ env.REPO_NAME }}
         EVENT_NAME: ${{ env.EVENT_NAME }}
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: GCP
         run: |
           cat > service_account_creds.json << EOF
@@ -109,15 +109,15 @@ jobs:
 
   macos-bazel:
     name: Bazel macOS
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: GCP
         run: |
           cat > service_account_creds.json << EOF
           ${{ secrets.GCP_CREDS }}
           EOF
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: "3.10"
       - name: Bazel on macOS
@@ -128,7 +128,7 @@ jobs:
             export BAZEL_OPTIMIZATION="$BAZEL_OPTIMIZATION --remote_upload_local_results=true --google_credentials=service_account_creds.json"
           fi
           sudo -E -H bash -e .github/workflows/build.bazel.sh python3
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ runner.os }}-bazel-bin
           path: |
@@ -142,17 +142,17 @@ jobs:
   macos-wheel:
     name: Wheel ${{ matrix.python }} macOS
     needs: macos-bazel
-    runs-on: macOS-11
+    runs-on: macOS-12
     strategy:
       matrix:
-        python: ['3.9', '3.10', '3.11']
+        python: ['3.9', '3.10', '3.11', '3.12']
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: ${{ runner.os }}-bazel-bin
           path: bazel-bin
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: ${{ matrix.python }}
       - name: Wheel ${{ matrix.python }} macOS
@@ -175,7 +175,7 @@ jobs:
             cp $f wheelhouse
           done
           ls wheelhouse/*
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ runner.os }}-${{ matrix.python }}-wheel
           path: wheelhouse
@@ -183,17 +183,17 @@ jobs:
   macos-test:
     name: Test ${{ matrix.python }} macOS
     needs: macos-wheel
-    runs-on: macOS-11
+    runs-on: macOS-12
     strategy:
       matrix:
         python: ['3.9']
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: ${{ runner.os }}-${{ matrix.python }}-wheel
           path: wheelhouse
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: ${{ matrix.python }}
       - run: |
@@ -225,7 +225,7 @@ jobs:
     name: Bazel Linux
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: GCP
         run: |
           cat > service_account_creds.json << EOF
@@ -271,7 +271,7 @@ jobs:
           find build/tensorflow_io -name '*runfiles*' | xargs rm -rf
           find build/tensorflow_io_gcs_filesystem -name '*runfiles*' | xargs rm -rf
           sudo rm -rf build/tensorflow_io/core/golang_ops.h
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ runner.os }}-bazel-bin
           path: |
@@ -281,13 +281,13 @@ jobs:
   linux-wheel:
     name: Wheel ${{ matrix.python }} Linux
     needs: linux-bazel
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python: ['3.9', '3.10', '3.11']
+        python: ['3.9', '3.10', '3.11', '3.12']
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: ${{ runner.os }}-bazel-bin
           path: bazel-bin
@@ -307,7 +307,7 @@ jobs:
           done
           sudo chown -R $(id -nu):$(id -ng) .
           ls wheelhouse/*
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ runner.os }}-${{ matrix.python }}-wheel
           path: wheelhouse
@@ -320,11 +320,11 @@ jobs:
       matrix:
         python: ['3.9']
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: ${{ matrix.python }}
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: ${{ runner.os }}-${{ matrix.python }}-wheel
           path: wheelhouse
@@ -355,7 +355,7 @@ jobs:
     name: Bazel Windows
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: egor-tensin/vs-shell@9a932a62d05192eae18ca370155cf877eecc2202 # v2
         with:
           arch: x64
@@ -387,7 +387,7 @@ jobs:
           cp -r bazel-bin/tensorflow_io build
           cp -r bazel-bin/tensorflow_io_gcs_filesystem build
           bash -c "find build -not -name '*.so' -type f | xargs rm -rf"
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ runner.os }}-bazel-bin
           path: |
@@ -400,14 +400,14 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python: ['3.9', '3.10', '3.11']
+        python: ['3.9', '3.10', '3.11', '3.12']
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: ${{ runner.os }}-bazel-bin
           path: bazel-bin
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: ${{ matrix.python }}
       - name: Wheel ${{ matrix.python }} Windows
@@ -420,7 +420,7 @@ jobs:
           rm -rf build
           python setup.py --project tensorflow-io-gcs-filesystem --data bazel-bin -q bdist_wheel
           ls -la dist
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ runner.os }}-${{ matrix.python }}-wheel
           path: dist
@@ -433,15 +433,15 @@ jobs:
       matrix:
         python: ['3.9']
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: ${{ runner.os }}-${{ matrix.python }}-wheel
           path: wheel
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: ${{ matrix.python }}
-      - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
+      - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: '8.x'
       - name: Setup ${{ matrix.python }} Windows
@@ -487,57 +487,72 @@ jobs:
     needs: [linux-wheel, macos-wheel] #, windows-wheel]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: macOS-3.9-wheel
           path: macOS-3.9-wheel
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: macOS-3.10-wheel
           path: macOS-3.10-wheel
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: macOS-3.11-wheel
           path: macOS-3.11-wheel
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
+        with:
+          name: macOS-3.12-wheel
+          path: macOS-3.12-wheel
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: Linux-3.9-wheel
           path: Linux-3.9-wheel
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: Linux-3.10-wheel
           path: Linux-3.10-wheel
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: Linux-3.11-wheel
           path: Linux-3.11-wheel
-      #- uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
+        with:
+          name: Linux-3.12-wheel
+          path: Linux-3.12-wheel
+      #- uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
       #  with:
       #    name: Windows-3.9-wheel
       #    path: Windows-3.9-wheel
-      #- uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      #- uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
       #  with:
       #    name: Windows-3.10-wheel
       #    path: Windows-3.10-wheel
-      #- uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      #- uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
       #  with:
       #    name: Windows-3.11-wheel
       #    path: Windows-3.11-wheel
+      #- uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
+      #  with:
+      #    name: Windows-3.12-wheel
+      #    path: Windows-3.12-wheel
       - run: |
           set -e -x
           mkdir -p wheelhouse
           cp macOS-3.9-wheel/*.whl wheelhouse/
           cp macOS-3.10-wheel/*.whl wheelhouse/
           cp macOS-3.11-wheel/*.whl wheelhouse/
+          cp macOS-3.12-wheel/*.whl wheelhouse/
           cp Linux-3.9-wheel/*.whl wheelhouse/
           cp Linux-3.10-wheel/*.whl wheelhouse/
           cp Linux-3.11-wheel/*.whl wheelhouse/
+          cp Linux-3.12-wheel/*.whl wheelhouse/
           # cp Windows-3.9-wheel/*.whl wheelhouse/
           # cp Windows-3.10-wheel/*.whl wheelhouse/
           # cp Windows-3.11-wheel/*.whl wheelhouse/
+          # cp Windows-3.12-wheel/*.whl wheelhouse/
           ls -la wheelhouse/
           sha256sum wheelhouse/*.whl
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: tensorflow-io-release
           path: wheelhouse
@@ -548,8 +563,8 @@ jobs:
     needs: [release]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: tensorflow-io-release
           path: wheelhouse
@@ -571,12 +586,12 @@ jobs:
           COPY wheelhouse.commit /wheelhouse.commit
           COPY wheelhouse.version /wheelhouse.version
           EOF
-      - uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
-      - uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+      - uses: docker/setup-buildx-action@d70bba72b1f3fd22344832f00baa16ece964efeb # v3.3.0
+      - uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446 # v3.2.0
         with:
           username: tfsigio
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56 # v5.1.0
+      - uses: docker/build-push-action@15560696de535e4014efeff63c48f16952e52dd1 # v6.2.0
         with:
           context: .
           push: true
@@ -588,8 +603,8 @@ jobs:
     needs: [lint, linux-test, macos-test, windows-test]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: 3.8
       - run: |
@@ -613,7 +628,7 @@ jobs:
           set -e -x
           BUILD_NUMBER=$(date "+%Y%m%d%H%M%S")
           echo ${BUILD_NUMBER} > BUILD_NUMBER
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: BUILD_NUMBER
           path: BUILD_NUMBER
@@ -622,22 +637,22 @@ jobs:
     name: Nightly ${{ matrix.python }} macOS
     if: github.event_name == 'push'
     needs: [build-number, macos-wheel]
-    runs-on: macOS-11
+    runs-on: macOS-12
     strategy:
       matrix:
-        python: ['3.9', '3.10', '3.11']
+        python: ['3.9', '3.10', '3.11', '3.12']
     steps:
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: BUILD_NUMBER
       - uses: einaregilsson/build-number@46decf22c413b48c8923e98b2b5836f8aaf7781e # v3
       - run: echo "Build number is $BUILD_NUMBER"
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: ${{ runner.os }}-bazel-bin
           path: bazel-bin
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: ${{ matrix.python }}
       - name: Wheel ${{ matrix.python }} macOS
@@ -660,7 +675,7 @@ jobs:
             cp $f wheelhouse
           done
           ls wheelhouse/*
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ runner.os }}-${{ matrix.python }}-nightly
           path: wheelhouse
@@ -672,15 +687,15 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: ['3.9', '3.10', '3.11']
+        python: ['3.9', '3.10', '3.11', '3.12']
     steps:
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: BUILD_NUMBER
       - uses: einaregilsson/build-number@46decf22c413b48c8923e98b2b5836f8aaf7781e # v3
       - run: echo "Build number is $BUILD_NUMBER"
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: ${{ runner.os }}-bazel-bin
           path: bazel-bin
@@ -700,7 +715,7 @@ jobs:
           done
           sudo chown -R $(id -nu):$(id -ng) .
           ls wheelhouse/*
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ runner.os }}-${{ matrix.python }}-nightly
           path: wheelhouse
@@ -712,19 +727,19 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python: ['3.9', '3.10', '3.11']
+        python: ['3.9', '3.10', '3.11', '3.12']
     steps:
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: BUILD_NUMBER
       - uses: einaregilsson/build-number@46decf22c413b48c8923e98b2b5836f8aaf7781e # v3
       - run: echo "Build number is $BUILD_NUMBER"
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: ${{ runner.os }}-bazel-bin
           path: bazel-bin
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: ${{ matrix.python }}
       - name: Wheel ${{ matrix.python }} Windows
@@ -737,7 +752,7 @@ jobs:
           rm -rf build
           python setup.py --project tensorflow-io-gcs-filesystem --data bazel-bin -q bdist_wheel --nightly %BUILD_NUMBER%
           ls -la dist
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ runner.os }}-${{ matrix.python }}-nightly
           path: dist
@@ -748,57 +763,72 @@ jobs:
     needs: [linux-nightly, macos-nightly, windows-nightly]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: macOS-3.9-nightly
           path: macOS-3.9-nightly
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: macOS-3.10-nightly
           path: macOS-3.10-nightly
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: macOS-3.11-nightly
           path: macOS-3.11-nightly
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
+        with:
+          name: macOS-3.12-nightly
+          path: macOS-3.12-nightly
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: Linux-3.9-nightly
           path: Linux-3.9-nightly
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: Linux-3.10-nightly
           path: Linux-3.10-nightly
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: Linux-3.11-nightly
           path: Linux-3.11-nightly
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
+        with:
+          name: Linux-3.12-nightly
+          path: Linux-3.12-nightly
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: Windows-3.9-nightly
           path: Windows-3.9-nightly
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: Windows-3.10-nightly
           path: Windows-3.10-nightly
-      - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
           name: Windows-3.11-nightly
           path: Windows-3.11-nightly
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
+        with:
+          name: Windows-3.12-nightly
+          path: Windows-3.12-nightly
       - run: |
           set -e -x
           mkdir -p dist
           cp macOS-3.9-nightly/tensorflow_io_nightly*.whl dist/
           cp macOS-3.10-nightly/tensorflow_io_nightly*.whl dist/
           cp macOS-3.11-nightly/tensorflow_io_nightly*.whl dist/
+          cp macOS-3.12-nightly/tensorflow_io_nightly*.whl dist/
           cp Linux-3.9-nightly/tensorflow_io_nightly*.whl dist/
           cp Linux-3.10-nightly/tensorflow_io_nightly*.whl dist/
           cp Linux-3.11-nightly/tensorflow_io_nightly*.whl dist/
+          cp Linux-3.12-nightly/tensorflow_io_nightly*.whl dist/
           cp Windows-3.9-nightly/tensorflow_io_nightly*.whl dist/
           cp Windows-3.10-nightly/tensorflow_io_nightly*.whl dist/
           cp Windows-3.11-nightly/tensorflow_io_nightly*.whl dist/
+          cp Windows-3.12-nightly/tensorflow_io_nightly*.whl dist/
           ls -la dist/
           sha256sum dist/*.whl
-      - uses: pypa/gh-action-pypi-publish@2f6f737ca5f74c637829c0f5c3acd0e29ea5e8bf # v1.8.11
+      - uses: pypa/gh-action-pypi-publish@ec4db0b4ddc65acdf4bff5fa45ac92d78b56bdf0 # v1.9.0
         with:
           user: __token__
           password: ${{ secrets.github_tensorflow_io_nightly }}
@@ -809,15 +839,18 @@ jobs:
           cp macOS-3.9-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
           cp macOS-3.10-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
           cp macOS-3.11-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
+          cp macOS-3.12-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
           cp Linux-3.9-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
           cp Linux-3.10-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
           cp Linux-3.11-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
+          cp Linux-3.12-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
           cp Windows-3.9-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
           cp Windows-3.10-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
           cp Windows-3.11-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
+          cp Windows-3.12-nightly/tensorflow_io_gcs_filesystem_nightly*.whl dist/
           ls -la dist/
           sha256sum dist/*.whl
-      - uses: pypa/gh-action-pypi-publish@2f6f737ca5f74c637829c0f5c3acd0e29ea5e8bf # v1.8.11
+      - uses: pypa/gh-action-pypi-publish@ec4db0b4ddc65acdf4bff5fa45ac92d78b56bdf0 # v1.9.0
         with:
           user: __token__
           password: ${{ secrets.tensorflow_io_gcs_filesystem_nightly }}
@@ -828,8 +861,8 @@ jobs:
     needs: [linux-nightly, macos-nightly, windows-nightly]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: 3.8
       - run: |
