@@ -880,7 +880,7 @@ http_archive(
 # Needed for llvm_toolchain and Golang
 http_archive(
     name = "com_grail_bazel_toolchain",
-    sha256 = "9e6065ded4b7453143e1586d6819729a63cd233114b72bf85ff3435367b02c90",
+    sha256 = "4b7999c1fa2c3117bb21651e3c155b152e44ae67b2c311214883d4707dbe183f",
     strip_prefix = "bazel-toolchain-edd07e96a2ecaa131af9234d6582875d980c0ac7",
     urls = [
         "https://storage.googleapis.com/mirror.tensorflow.org/github.com/grailbio/bazel-toolchain/archive/edd07e96a2ecaa131af9234d6582875d980c0ac7.tar.gz",
